@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Scene, camera, renderer
       const S = new THREE.Scene();
       const C = new THREE.PerspectiveCamera(32, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
-      C.position.set(0, -0.5, 5.8);
+      C.position.set(0, 0.3, 5.8);
       const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       R.setSize(wrap.clientWidth, wrap.clientHeight);
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ty += (my - ty) * 0.08;
 
         // Float Y (smooth up/down)
-        const fy = Math.sin(t * 0.5) * 0.2 - 0.1;
+        const fy = Math.sin(t * 0.5) * 0.2 - 0.6;
 
         box.position.y = fy;
         box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08 + tx * 0.15;
