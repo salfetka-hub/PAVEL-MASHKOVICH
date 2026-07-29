@@ -173,6 +173,70 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     scene.add(dust);
 
+    // ── TEXT BOX ──
+    const textCanvas = document.createElement('canvas');
+    textCanvas.width = 1024;
+    textCanvas.height = 512;
+    const ctx = textCanvas.getContext('2d');
+
+    ctx.clearRect(0, 0, 1024, 512);
+
+    // Background (transparent)
+    ctx.fillStyle = 'rgba(10, 14, 23, 0.55)';
+    ctx.roundRect(0, 0, 1024, 512, 24);
+    ctx.fill();
+
+    // Text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // "PAVEL"
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 96px "DM Sans", "Inter Tight", sans-serif';
+    ctx.fillText('PAVEL', 512, 190);
+
+    // "//"
+    ctx.fillStyle = '#3ea094';
+    ctx.font = '600 72px "DM Sans", "Inter Tight", sans-serif';
+    ctx.fillText('//', 512, 290);
+
+    // "MASHKOVICH"
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 96px "DM Sans", "Inter Tight", sans-serif';
+    ctx.fillText('MASHKOVICH', 512, 390);
+
+    const textTex = new THREE.CanvasTexture(textCanvas);
+    textTex.needsUpdate = true;
+
+    const boxMat = new THREE.MeshStandardMaterial({
+      map: textTex,
+      roughness: 0.25,
+      metalness: 0.1,
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+
+    const textBox = new THREE.Mesh(
+      new THREE.BoxGeometry(2.8, 0.4, 1.6),
+      boxMat
+    );
+    textBox.position.set(0, -4, -1.5);
+    scene.add(textBox);
+
+    // Outline glow around box
+    const edgeMat = new THREE.MeshBasicMaterial({
+      color: 0x3ea094,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.25
+    });
+    const edgeBox = new THREE.Mesh(
+      new THREE.BoxGeometry(2.9, 0.5, 1.7),
+      edgeMat
+    );
+    edgeBox.position.copy(textBox.position);
+    scene.add(edgeBox);
+
     // Pointer target
     let tx = 0, ty = 0, rxc = 0, ryc = 0;
     wrap.addEventListener('pointermove', e => {
@@ -211,6 +275,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       teal.position.x = Math.cos(t * 0.6) * 4.5;
       teal.position.z = Math.sin(t * 0.6) * 4.5;
+
+      // Text box animation: float bottom → top + rotate
+      const floatY = -2.8 + (Math.sin(t * 0.35) * 0.5 + 0.5) * 5.6;
+      textBox.position.y = floatY;
+      textBox.rotation.y = t * 0.4;
+      textBox.rotation.x = Math.sin(t * 0.2) * 0.08;
+      textBox.rotation.z = Math.cos(t * 0.15) * 0.04;
+
+      edgeBox.position.y = floatY;
+      edgeBox.rotation.y = t * 0.4;
+      edgeBox.rotation.x = Math.sin(t * 0.2) * 0.08;
+      edgeBox.rotation.z = Math.cos(t * 0.15) * 0.04;
 
       renderer.render(scene, camera);
     };
