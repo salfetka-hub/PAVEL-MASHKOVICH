@@ -234,32 +234,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const x = c.getContext('2d');
       x.scale(dpr, dpr);
 
-      // Gradient bg
-      const grad = x.createLinearGradient(0, 0, W, H);
-      grad.addColorStop(0, 'rgba(10,14,23,0.5)');
-      grad.addColorStop(0.5, 'rgba(12,30,28,0.55)');
-      grad.addColorStop(1, 'rgba(10,14,23,0.5)');
-      x.fillStyle = grad;
-      const r = 20;
-      x.beginPath();
-      x.moveTo(r,0); x.lineTo(W-r,0);
-      x.quadraticCurveTo(W,0,W,r);
-      x.lineTo(W,H-r);
-      x.quadraticCurveTo(W,H,W-r,H);
-      x.lineTo(r,H);
-      x.quadraticCurveTo(0,H,0,H-r);
-      x.lineTo(0,r);
-      x.quadraticCurveTo(0,0,r,0);
-      x.closePath();
-      x.fill();
+      // Solid black background
+      x.fillStyle = '#0a0a0a';
+      x.fillRect(0, 0, W, H);
 
-      // Subtle grid pattern
-      x.strokeStyle = 'rgba(62,160,148,0.06)';
-      x.lineWidth = 1;
-      for (let i = 0; i < W; i += 30) {
+      // Subtle border glow
+      const borderGrad = x.createRadialGradient(W/2, H/2, 100, W/2, H/2, 320);
+      borderGrad.addColorStop(0, 'rgba(62,160,148,0)');
+      borderGrad.addColorStop(0.7, 'rgba(62,160,148,0)');
+      borderGrad.addColorStop(1, 'rgba(62,160,148,0.04)');
+      x.fillStyle = borderGrad;
+      x.fillRect(0, 0, W, H);
+
+      // Subtle grid
+      x.strokeStyle = 'rgba(62,160,148,0.05)';
+      x.lineWidth = 0.5;
+      for (let i = 0; i < W; i += 24) {
         x.beginPath(); x.moveTo(i,0); x.lineTo(i,H); x.stroke();
       }
-      for (let i = 0; i < H; i += 30) {
+      for (let i = 0; i < H; i += 24) {
         x.beginPath(); x.moveTo(0,i); x.lineTo(W,i); x.stroke();
       }
 
@@ -267,25 +260,25 @@ document.addEventListener('DOMContentLoaded', () => {
       x.textBaseline = 'middle';
 
       // Glow behind "PAVEL"
-      x.shadowColor = 'rgba(62,160,148,0.35)';
-      x.shadowBlur = 30;
-      x.fillStyle = '#fff';
-      x.font = '800 62px "DM Sans","Inter Tight",sans-serif';
+      x.shadowColor = 'rgba(62,160,148,0.4)';
+      x.shadowBlur = 36;
+      x.fillStyle = '#ffffff';
+      x.font = '800 74px "DM Sans","Inter Tight",sans-serif';
       x.fillText('PAVEL', W/2, 192);
 
       // Glow behind "MASHKOVICH"
-      x.shadowColor = 'rgba(62,160,148,0.25)';
-      x.shadowBlur = 24;
-      x.fillStyle = '#fff';
-      x.font = '800 48px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('MASHKOVICH', W/2, 272);
+      x.shadowColor = 'rgba(62,160,148,0.3)';
+      x.shadowBlur = 28;
+      x.fillStyle = '#ffffff';
+      x.font = '800 56px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('MASHKOVICH', W/2, 276);
 
-      // Thin teal accent line between names
+      // Accent line
       x.shadowBlur = 0;
-      x.strokeStyle = 'rgba(62,160,148,0.25)';
+      x.strokeStyle = 'rgba(62,160,148,0.3)';
       x.lineWidth = 1;
       x.beginPath();
-      x.moveTo(W/2 - 60, 234); x.lineTo(W/2 + 60, 234);
+      x.moveTo(W/2 - 72, 236); x.lineTo(W/2 + 72, 236);
       x.stroke();
 
       const tex = new THREE.CanvasTexture(c);
@@ -317,12 +310,16 @@ document.addEventListener('DOMContentLoaded', () => {
       rim.position.set(0, -3, -4);
       S.add(rim);
 
-      // Box (textured)
-      const M = new THREE.MeshStandardMaterial({
-        map: tex, roughness: 0.12, metalness: 0.0, transparent: true,
-        side: THREE.DoubleSide, envMapIntensity: 0.6
+      // Box materials: [right, left, top, bottom, front, back]
+      const blackMat = new THREE.MeshStandardMaterial({
+        color: 0x0a0a0a, roughness: 0.2, metalness: 0.0
       });
-      const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), M);
+      const texMat = new THREE.MeshStandardMaterial({
+        map: tex, roughness: 0.2, metalness: 0.0, side: THREE.DoubleSide
+      });
+      const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), [
+        blackMat, blackMat, blackMat, blackMat, texMat, texMat
+      ]);
       box.position.z = 0.6;
       S.add(box);
 
