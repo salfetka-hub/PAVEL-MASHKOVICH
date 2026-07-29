@@ -189,14 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
       x.textAlign = 'center';
       x.textBaseline = 'middle';
       x.fillStyle = '#fff';
-      x.font = '700 76px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('PAVEL', 512, 160);
-      x.fillStyle = '#3ea094';
-      x.font = '600 56px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('//', 512, 240);
+      x.font = '700 72px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('PAVEL', 512, 200);
       x.fillStyle = '#fff';
-      x.font = '700 76px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('MASHKOVICH', 512, 326);
+      x.font = '700 72px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('MASHKOVICH', 512, 310);
 
       const tex = new THREE.CanvasTexture(c);
       tex.needsUpdate = true;
