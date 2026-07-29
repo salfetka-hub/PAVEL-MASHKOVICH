@@ -287,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Scene, camera, renderer
       const S = new THREE.Scene();
-      S.background = new THREE.Color(0x050508);
       const C = new THREE.PerspectiveCamera(32, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
       C.position.set(0, 0.3, 5.8);
       const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -350,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       pGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
       const pMat = new THREE.PointsMaterial({
-        color: 0xffffff, size: 0.06, transparent: true, opacity: 0.7,
+        color: 0x3ea094, size: 0.04, transparent: true, opacity: 0.5,
         blending: THREE.AdditiveBlending
       });
       const particles = new THREE.Points(pGeo, pMat);
