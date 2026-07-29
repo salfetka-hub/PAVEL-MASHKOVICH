@@ -157,10 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── WEBGL 3D TEXT BOX ──
   (function init3D() {
     const canvas = document.getElementById('webgl');
-    if (!canvas || typeof THREE === 'undefined' || reducedMotion) return;
+    if (!canvas || typeof THREE === 'undefined' || reducedMotion) {
+      console.log('3D box skipped:', { canvas: !!canvas, three: typeof THREE !== 'undefined', reducedMotion });
+      return;
+    }
     const wrap = canvas.parentElement;
     if (!wrap) return;
 
+    console.log('Starting 3D text box...');
     try {
 
       // Canvas texture with text
