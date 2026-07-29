@@ -131,6 +131,65 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ── CUSTOM CURSOR ──
+  if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
+    const dot = document.querySelector('.cursor-dot');
+    const ring = document.querySelector('.cursor-ring');
+    if (dot && ring) {
+      let mx = 0, my = 0, rx = 0, ry = 0;
+
+      const onMove = e => {
+        mx = e.clientX; my = e.clientY;
+
+        // Check magnetic targets
+        const mag = e.target.closest('.btn, .nav-cta, .contact-links a, .magnetic');
+        ring.classList.toggle('hover', !!mag);
+
+        // Hover target for ring
+        const hoverEl = e.target.closest('a, button, .tilt, .nav-link, .footer-nav a, .footer-social a');
+        ring.classList.toggle('hover', !!hoverEl);
+      };
+      window.addEventListener('pointermove', onMove);
+
+      const loopCursor = () => {
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+        requestAnimationFrame(loopCursor);
+      };
+      loopCursor();
+    }
+  }
+
+  // ── MAGNETIC BUTTONS ──
+  if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.btn, .nav-cta, .contact-links a').forEach(el => {
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - r.left - r.width / 2) * 0.15;
+        const dy = (e.clientY - r.top - r.height / 2) * 0.15;
+        el.style.transform = el.classList.contains('btn') || el.classList.contains('nav-cta')
+          ? `translate3d(${dx}px, ${dy - 3}px, 0)`
+          : `translate3d(${dx}px, ${dy}px, 0)`;
+      });
+      el.addEventListener('pointerleave', () => {
+        el.style.transform = '';
+      });
+    });
+  }
+
+  // ── SCROLL PROGRESS ──
+  const bar = document.querySelector('.scroll-progress');
+  if (bar) {
+    const updateBar = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = h > 0 ? `${(window.scrollY / h) * 100}%` : '0%';
+    };
+    window.addEventListener('scroll', updateBar, { passive: true });
+    updateBar();
+  }
+
   // ── PARALLAX FLOATING CARDS ──
   if (!reducedMotion) {
     const floats = document.querySelectorAll('[data-depth]');
@@ -167,13 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Starting 3D text box...');
     try {
 
-      // Canvas texture with text (high DPI)
-      const dpr = 2;
+      // Canvas texture with text (retina-safe)
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      const W = 1024, H = 512;
       const c = document.createElement('canvas');
-      c.width = 2048 * dpr; c.height = 1024 * dpr;
+      c.width = W * dpr; c.height = H * dpr;
       const x = c.getContext('2d');
       x.scale(dpr, dpr);
-      const W = 2048, H = 1024;
 
       // Gradient bg
       const grad = x.createLinearGradient(0, 0, W, H);
@@ -181,25 +240,26 @@ document.addEventListener('DOMContentLoaded', () => {
       grad.addColorStop(0.5, 'rgba(12,30,28,0.55)');
       grad.addColorStop(1, 'rgba(10,14,23,0.5)');
       x.fillStyle = grad;
+      const r = 20;
       x.beginPath();
-      x.moveTo(40,0); x.lineTo(W-40,0);
-      x.quadraticCurveTo(W,0,W,40);
-      x.lineTo(W,H-40);
-      x.quadraticCurveTo(W,H,W-40,H);
-      x.lineTo(40,H);
-      x.quadraticCurveTo(0,H,0,H-40);
-      x.lineTo(0,40);
-      x.quadraticCurveTo(0,0,40,0);
+      x.moveTo(r,0); x.lineTo(W-r,0);
+      x.quadraticCurveTo(W,0,W,r);
+      x.lineTo(W,H-r);
+      x.quadraticCurveTo(W,H,W-r,H);
+      x.lineTo(r,H);
+      x.quadraticCurveTo(0,H,0,H-r);
+      x.lineTo(0,r);
+      x.quadraticCurveTo(0,0,r,0);
       x.closePath();
       x.fill();
 
       // Subtle grid pattern
       x.strokeStyle = 'rgba(62,160,148,0.06)';
       x.lineWidth = 1;
-      for (let i = 0; i < W; i += 40) {
+      for (let i = 0; i < W; i += 30) {
         x.beginPath(); x.moveTo(i,0); x.lineTo(i,H); x.stroke();
       }
-      for (let i = 0; i < H; i += 40) {
+      for (let i = 0; i < H; i += 30) {
         x.beginPath(); x.moveTo(0,i); x.lineTo(W,i); x.stroke();
       }
 
@@ -208,24 +268,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Glow behind "PAVEL"
       x.shadowColor = 'rgba(62,160,148,0.35)';
-      x.shadowBlur = 40;
+      x.shadowBlur = 30;
       x.fillStyle = '#fff';
-      x.font = '800 114px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('PAVEL', W/2, 380);
+      x.font = '800 62px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('PAVEL', W/2, 192);
 
       // Glow behind "MASHKOVICH"
       x.shadowColor = 'rgba(62,160,148,0.25)';
-      x.shadowBlur = 30;
+      x.shadowBlur = 24;
       x.fillStyle = '#fff';
-      x.font = '800 90px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('MASHKOVICH', W/2, 540);
+      x.font = '800 48px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('MASHKOVICH', W/2, 272);
 
       // Thin teal accent line between names
       x.shadowBlur = 0;
       x.strokeStyle = 'rgba(62,160,148,0.25)';
-      x.lineWidth = 1.5;
+      x.lineWidth = 1;
       x.beginPath();
-      x.moveTo(W/2 - 100, 460); x.lineTo(W/2 + 100, 460);
+      x.moveTo(W/2 - 60, 234); x.lineTo(W/2 + 60, 234);
       x.stroke();
 
       const tex = new THREE.CanvasTexture(c);

@@ -969,6 +969,59 @@ section {
   transform: scale(1);
 }
 
+/* ==== CUSTOM CURSOR ==== */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  a, button, .tilt, .btn, .logo, .nav-link, .contact-links a,
+  .footer-nav a, .footer-social a { cursor: none; }
+}
+
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.cursor-dot {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(62,160,148,0.6);
+  margin: -4px 0 0 -4px;
+  transition: opacity 0.24s;
+}
+
+.cursor-ring {
+  width: 44px; height: 44px;
+  border: 1.5px solid rgba(62,160,148,0.35);
+  margin: -22px 0 0 -22px;
+  transition: width 0.3s, height 0.3s, margin 0.3s, border-color 0.3s, background 0.3s;
+  background: rgba(62,160,148,0.04);
+}
+
+.cursor-ring.hover {
+  width: 64px; height: 64px;
+  margin: -32px 0 0 -32px;
+  border-color: rgba(62,160,148,0.55);
+  background: rgba(62,160,148,0.08);
+}
+
+/* ==== SCROLL PROGRESS ==== */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), #6366f1);
+  z-index: 9998;
+  pointer-events: none;
+  will-change: width;
+  transition: width 0.1s linear;
+}
+
 /* ==== RESPONSIVE ==== */
 @media (max-width: 968px) {
   .hero .container {
