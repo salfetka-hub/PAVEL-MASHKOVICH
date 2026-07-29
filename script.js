@@ -132,20 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── AMBIENT BLOB BEHIND CURSOR ──
-  if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
+  if (!reducedMotion) {
     const blob = document.querySelector('.cursor-blob');
     if (blob) {
       let mx = 0, my = 0;
-      let bx = 0, by = 0;
+      let bx = -500, by = -500;
 
       window.addEventListener('pointermove', e => {
         mx = e.clientX;
         my = e.clientY;
-      });
+      }, { passive: true });
 
       const loopBlob = () => {
-        bx += (mx - bx) * 0.06;
-        by += (my - by) * 0.06;
+        bx += (mx - bx) * 0.05;
+        by += (my - by) * 0.05;
         blob.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
         requestAnimationFrame(loopBlob);
       };

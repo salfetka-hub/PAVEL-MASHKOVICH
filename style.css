@@ -973,13 +973,13 @@ section {
 .cursor-blob {
   position: fixed;
   top: 0; left: 0;
-  width: 420px; height: 420px;
-  margin: -210px 0 0 -210px;
+  width: 500px; height: 500px;
+  margin: -250px 0 0 -250px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(18,18,28,0.09), transparent 68%);
-  filter: blur(50px);
+  background: radial-gradient(circle, rgba(18,18,28,0.13), transparent 65%);
+  filter: blur(60px);
   pointer-events: none;
-  z-index: -1;
+  z-index: 1;
   will-change: transform;
   transform: translateZ(0);
 }
