@@ -162,9 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrap = canvas.parentElement;
 
     const camera = new THREE.PerspectiveCamera(
-      45, wrap.clientWidth / wrap.clientHeight, 0.1, 100
+      40, wrap.clientWidth / wrap.clientHeight, 0.1, 100
     );
-    camera.position.set(0, 0, 6);
+    camera.position.set(0, 0.5, 5.5);
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -189,34 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
     violet.position.set(4, -2, 2);
     scene.add(violet);
 
-    // Main knot
-    const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.35, 0.42, 180, 32),
-      new THREE.MeshStandardMaterial({
-        color: 0x2f8f83,
-        roughness: 0.22,
-        metalness: 0.72
-      })
-    );
-    scene.add(knot);
-
-    // Wireframe shell
-    const shell = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(2.5, 1),
-      new THREE.MeshBasicMaterial({
-        color: 0x3ea094,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.14
-      })
-    );
-    scene.add(shell);
-
-    // Orbiting particles
-    const count = 220;
+    // Particles (subtle background)
+    const count = 160;
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      const r = 3 + Math.random() * 1.6;
+      const r = 4 + Math.random() * 2;
       const t = Math.random() * Math.PI * 2;
       const p = Math.acos(2 * Math.random() - 1);
       positions[i * 3] = r * Math.sin(p) * Math.cos(t);
@@ -227,9 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
     pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const dust = new THREE.Points(pGeo, new THREE.PointsMaterial({
       color: 0x3ea094,
-      size: 0.045,
+      size: 0.035,
       transparent: true,
-      opacity: 0.65
+      opacity: 0.4
     }));
     scene.add(dust);
 
@@ -317,15 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rxc += (ty * 0.4 - rxc) * 0.05;
       ryc += (tx * 0.5 - ryc) * 0.05;
 
-      knot.rotation.x = t * 0.24 + rxc;
-      knot.rotation.y = t * 0.32 + ryc;
-      knot.position.y = Math.sin(t * 0.9) * 0.12;
-
-      shell.rotation.x = -t * 0.08 + rxc * 0.4;
-      shell.rotation.y = t * 0.12 + ryc * 0.4;
-
-      dust.rotation.y = t * 0.05;
-      dust.rotation.x = t * 0.02;
+      dust.rotation.y = t * 0.04;
 
       teal.position.x = Math.cos(t * 0.6) * 4.5;
       teal.position.z = Math.sin(t * 0.6) * 4.5;
