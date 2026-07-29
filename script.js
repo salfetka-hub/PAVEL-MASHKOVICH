@@ -318,16 +318,17 @@ document.addEventListener('DOMContentLoaded', () => {
         map: tex, roughness: 0.2, metalness: 0.0, side: THREE.DoubleSide
       });
       const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), [
-        blackMat, blackMat, blackMat, blackMat, texMat, texMat
+        texMat, texMat, blackMat, blackMat, texMat, texMat
       ]);
       box.position.z = 0.6;
       S.add(box);
 
-      // Wireframe edge (double)
-      const EM = new THREE.MeshBasicMaterial({
-        color: 0x3ea094, wireframe: true, transparent: true, opacity: 0.3
+      // Edge outline (clean lines, no cross-hatch)
+      const EG = new THREE.EdgesGeometry(new THREE.BoxGeometry(2.88, 0.43, 1.48));
+      const EL = new THREE.LineBasicMaterial({
+        color: 0x3ea094, transparent: true, opacity: 0.35
       });
-      const edge = new THREE.Mesh(new THREE.BoxGeometry(2.88, 0.43, 1.48), EM);
+      const edge = new THREE.LineSegments(EG, EL);
       edge.position.copy(box.position);
       S.add(edge);
 
