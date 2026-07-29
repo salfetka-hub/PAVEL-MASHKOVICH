@@ -976,7 +976,7 @@ section {
   width: 500px; height: 500px;
   margin: -250px 0 0 -250px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(18,18,28,0.13), transparent 65%);
+  background: radial-gradient(circle, rgba(18,18,28,0.22), transparent 62%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 1;
