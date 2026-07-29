@@ -561,9 +561,9 @@ section {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transform-style: preserve-3d;
+  will-change: transform;
   transition: box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-              border-color 0.35s,
-              transform 0.12s ease-out;
+              border-color 0.35s;
 }
 
 .service-card:hover {

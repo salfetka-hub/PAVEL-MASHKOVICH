@@ -82,32 +82,69 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.split-word, .split-char, .reveal-l, .reveal-r, .reveal-scale')
     .forEach(el => splitObserver.observe(el));
 
-  // ── 3D TILT ON CARDS ──
+  // ── 3D TILT ON CARDS (rAF-throttled, delegated) ──
   if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
-    document.querySelectorAll('.tilt').forEach(card => {
-      const shine = card.querySelector('.card-shine');
+    const grid = document.querySelector('.services-grid');
+    if (!grid) return;
 
-      card.addEventListener('pointermove', e => {
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width;
-        const py = (e.clientY - r.top) / r.height;
-        const rx = (0.5 - py) * 10;
-        const ry = (px - 0.5) * 12;
+    let rafId = null;
+    let active = null;
+    let mx = 0, my = 0, rx = 0, ry = 0;
 
-        card.style.transform =
-          `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+    const apply = () => {
+      rafId = null;
+      if (!active) return;
+      const shine = active.querySelector('.card-shine');
+      active.style.transform =
+        `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+      if (shine) {
+        shine.style.setProperty('opacity', '1');
+        const px = (mx + 1) / 2;
+        const py = (my + 1) / 2;
+        shine.style.background =
+          `radial-gradient(420px circle at ${px * 100}% ${py * 100}%, rgba(62,160,148,0.18), transparent 60%)`;
+      }
+    };
 
-        if (shine) {
-          shine.style.opacity = '1';
-          shine.style.background =
-            `radial-gradient(420px circle at ${px * 100}% ${py * 100}%, rgba(62,160,148,0.18), transparent 60%)`;
+    const schedule = () => {
+      if (!rafId) rafId = requestAnimationFrame(apply);
+    };
+
+    grid.addEventListener('pointermove', e => {
+      const card = e.target.closest('.tilt');
+      if (!card) {
+        if (active) {
+          active.style.transform = '';
+          const s = active.querySelector('.card-shine');
+          if (s) s.style.opacity = '0';
+          active = null;
         }
-      });
+        return;
+      }
+      if (active !== card) {
+        if (active) {
+          active.style.transform = '';
+          const s = active.querySelector('.card-shine');
+          if (s) s.style.opacity = '0';
+        }
+        active = card;
+      }
+      const r = card.getBoundingClientRect();
+      mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      my = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      rx = -my * 10;
+      ry = mx * 12;
+      schedule();
+    });
 
-      card.addEventListener('pointerleave', () => {
-        card.style.transform = '';
-        if (shine) shine.style.opacity = '0';
-      });
+    grid.addEventListener('pointerleave', () => {
+      if (active) {
+        active.style.transform = '';
+        const s = active.querySelector('.card-shine');
+        if (s) s.style.opacity = '0';
+        active = null;
+      }
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
     });
   }
 
