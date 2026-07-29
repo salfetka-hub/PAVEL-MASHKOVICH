@@ -1022,7 +1022,8 @@ section {
     top: -30px !important;
   }
   .float-card-2 {
-    bottom: -30px !important;
+    bottom: 0 !important;
+    right: 2% !important;
   }
 
   .nav {
