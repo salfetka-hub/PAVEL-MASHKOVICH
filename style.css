@@ -1019,7 +1019,7 @@ section {
 
 @media (max-width: 768px) {
   .float-card-1 {
-    top: -4%;
+    top: -30px !important;
   }
 
   .nav {
