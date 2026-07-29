@@ -154,186 +154,106 @@ document.addEventListener('DOMContentLoaded', () => {
     loopFloats();
   }
 
-  // ── WEBGL 3D SCENE ──
-  const canvas = document.getElementById('webgl');
-
-  if (canvas && typeof THREE !== 'undefined' && !reducedMotion) {
-    const scene = new THREE.Scene();
+  // ── WEBGL 3D TEXT BOX ──
+  (function init3D() {
+    const canvas = document.getElementById('webgl');
+    if (!canvas || typeof THREE === 'undefined' || reducedMotion) return;
     const wrap = canvas.parentElement;
+    if (!wrap) return;
 
-    const camera = new THREE.PerspectiveCamera(
-      40, wrap.clientWidth / wrap.clientHeight, 0.1, 100
-    );
-    camera.position.set(0, 0.5, 5.5);
+    try {
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      // Canvas texture with text
+      const c = document.createElement('canvas');
+      c.width = 1024; c.height = 512;
+      const x = c.getContext('2d');
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      // Solid dark bg
+      x.fillStyle = 'rgba(10,14,23,0.6)';
+      x.beginPath();
+      x.moveTo(20,0); x.lineTo(1004,0);
+      x.quadraticCurveTo(1024,0,1024,20);
+      x.lineTo(1024,492);
+      x.quadraticCurveTo(1024,512,1004,512);
+      x.lineTo(20,512);
+      x.quadraticCurveTo(0,512,0,492);
+      x.lineTo(0,20);
+      x.quadraticCurveTo(0,0,20,0);
+      x.closePath();
+      x.fill();
 
-    const key = new THREE.DirectionalLight(0xffffff, 0.9);
-    key.position.set(4, 5, 6);
-    scene.add(key);
+      x.textAlign = 'center';
+      x.textBaseline = 'middle';
+      x.fillStyle = '#fff';
+      x.font = '700 76px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('PAVEL', 512, 160);
+      x.fillStyle = '#3ea094';
+      x.font = '600 56px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('//', 512, 240);
+      x.fillStyle = '#fff';
+      x.font = '700 76px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('MASHKOVICH', 512, 326);
 
-    const teal = new THREE.PointLight(0x3ea094, 2.4, 22);
-    teal.position.set(-4, 2, 3);
-    scene.add(teal);
+      const tex = new THREE.CanvasTexture(c);
+      tex.needsUpdate = true;
 
-    const violet = new THREE.PointLight(0x7c5cff, 1.6, 22);
-    violet.position.set(4, -2, 2);
-    scene.add(violet);
+      // Scene, camera, renderer
+      const S = new THREE.Scene();
+      const C = new THREE.PerspectiveCamera(35, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
+      C.position.set(0, 0.4, 4.8);
+      const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      R.setSize(wrap.clientWidth, wrap.clientHeight);
 
-    // Particles (subtle background)
-    const count = 160;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = 4 + Math.random() * 2;
-      const t = Math.random() * Math.PI * 2;
-      const p = Math.acos(2 * Math.random() - 1);
-      positions[i * 3] = r * Math.sin(p) * Math.cos(t);
-      positions[i * 3 + 1] = r * Math.sin(p) * Math.sin(t);
-      positions[i * 3 + 2] = r * Math.cos(p);
+      // Lights
+      S.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const DL = new THREE.DirectionalLight(0xffffff, 1.2);
+      DL.position.set(3, 5, 4);
+      S.add(DL);
+
+      // Box
+      const M = new THREE.MeshStandardMaterial({
+        map: tex, roughness: 0.15, metalness: 0.0, transparent: true, side: THREE.DoubleSide
+      });
+      const box = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 1.4), M);
+      box.position.z = 0.8;
+      S.add(box);
+
+      // Wireframe edge
+      const EM = new THREE.MeshBasicMaterial({
+        color: 0x3ea094, wireframe: true, transparent: true, opacity: 0.18
+      });
+      const edge = new THREE.Mesh(new THREE.BoxGeometry(2.72, 0.52, 1.52), EM);
+      edge.position.copy(box.position);
+      S.add(edge);
+
+      // Animation
+      const clock = new THREE.Clock();
+      const anim = () => {
+        requestAnimationFrame(anim);
+        const t = clock.getElapsedTime();
+        const fy = Math.sin(t * 0.5) * 1.5;
+        box.position.y = fy;
+        box.rotation.y = t * 0.45;
+        box.rotation.x = Math.sin(t * 0.2) * 0.06;
+        edge.position.y = fy;
+        edge.rotation.y = t * 0.45;
+        edge.rotation.x = Math.sin(t * 0.2) * 0.06;
+        R.render(S, C);
+      };
+      anim();
+
+      const resize = () => {
+        const w = wrap.clientWidth;
+        const h = wrap.clientHeight;
+        C.aspect = w / h;
+        C.updateProjectionMatrix();
+        R.setSize(w, h);
+      };
+      window.addEventListener('resize', resize);
+
+    } catch (e) {
+      console.warn('3D box error:', e);
     }
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const dust = new THREE.Points(pGeo, new THREE.PointsMaterial({
-      color: 0x3ea094,
-      size: 0.035,
-      transparent: true,
-      opacity: 0.4
-    }));
-    scene.add(dust);
-
-    // ── TEXT BOX ──
-    const textCanvas = document.createElement('canvas');
-    textCanvas.width = 1024;
-    textCanvas.height = 512;
-    const ctx = textCanvas.getContext('2d');
-
-    ctx.clearRect(0, 0, 1024, 512);
-
-    // rounded rect
-    ctx.fillStyle = 'rgba(10, 14, 23, 0.55)';
-    const rr = 24, cw = 1024, ch = 512;
-    ctx.beginPath();
-    ctx.moveTo(rr, 0); ctx.lineTo(cw - rr, 0);
-    ctx.quadraticCurveTo(cw, 0, cw, rr);
-    ctx.lineTo(cw, ch - rr);
-    ctx.quadraticCurveTo(cw, ch, cw - rr, ch);
-    ctx.lineTo(rr, ch);
-    ctx.quadraticCurveTo(0, ch, 0, ch - rr);
-    ctx.lineTo(0, rr);
-    ctx.quadraticCurveTo(0, 0, rr, 0);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 86px "DM Sans", "Inter Tight", sans-serif';
-    ctx.fillText('PAVEL', 512, 170);
-
-    ctx.fillStyle = '#3ea094';
-    ctx.font = '600 64px "DM Sans", "Inter Tight", sans-serif';
-    ctx.fillText('//', 512, 256);
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 86px "DM Sans", "Inter Tight", sans-serif';
-    ctx.fillText('MASHKOVICH', 512, 348);
-
-    const textTex = new THREE.CanvasTexture(textCanvas);
-    textTex.needsUpdate = true;
-
-    const boxMat = new THREE.MeshStandardMaterial({
-      map: textTex,
-      roughness: 0.2,
-      metalness: 0.05,
-      transparent: true,
-      side: THREE.DoubleSide
-    });
-
-    const textBox = new THREE.Mesh(
-      new THREE.BoxGeometry(3.2, 0.45, 1.8),
-      boxMat
-    );
-    textBox.position.z = 1.6;
-    scene.add(textBox);
-
-    const edgeMat = new THREE.MeshBasicMaterial({
-      color: 0x3ea094,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.2
-    });
-    const edgeBox = new THREE.Mesh(
-      new THREE.BoxGeometry(3.32, 0.57, 1.92),
-      edgeMat
-    );
-    edgeBox.position.copy(textBox.position);
-    scene.add(edgeBox);
-
-    // Pointer target
-    let tx = 0, ty = 0, rxc = 0, ryc = 0;
-    wrap.addEventListener('pointermove', e => {
-      const r = wrap.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
-    });
-    wrap.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
-
-    const clock = new THREE.Clock();
-    let visible = true;
-
-    const sceneObserver = new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
-    }, { threshold: 0 });
-    sceneObserver.observe(wrap);
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      if (!visible) return;
-
-      const t = clock.getElapsedTime();
-
-      rxc += (ty * 0.4 - rxc) * 0.05;
-      ryc += (tx * 0.5 - ryc) * 0.05;
-
-      dust.rotation.y = t * 0.04;
-
-      teal.position.x = Math.cos(t * 0.6) * 4.5;
-      teal.position.z = Math.sin(t * 0.6) * 4.5;
-
-      // Text box animation: float bottom → top + rotate
-      const floatY = Math.sin(t * 0.6) * 1.8;
-      textBox.position.y = floatY;
-      textBox.rotation.y = t * 0.5;
-      textBox.rotation.x = Math.sin(t * 0.25) * 0.1;
-      textBox.rotation.z = Math.cos(t * 0.18) * 0.05;
-
-      edgeBox.position.y = floatY;
-      edgeBox.rotation.y = t * 0.5;
-      edgeBox.rotation.x = Math.sin(t * 0.25) * 0.1;
-      edgeBox.rotation.z = Math.cos(t * 0.18) * 0.05;
-
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Resize
-    const resize = () => {
-      const w = wrap.clientWidth;
-      const h = wrap.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    window.addEventListener('resize', resize);
-  }
+  })();
 });
