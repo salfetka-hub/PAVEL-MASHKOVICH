@@ -131,34 +131,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── CUSTOM CURSOR ──
+  // ── AMBIENT BLOB BEHIND CURSOR ──
   if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
-    const dot = document.querySelector('.cursor-dot');
-    const ring = document.querySelector('.cursor-ring');
-    if (dot && ring) {
-      let mx = 0, my = 0, rx = 0, ry = 0;
+    const blob = document.querySelector('.cursor-blob');
+    if (blob) {
+      let mx = 0, my = 0;
+      let bx = 0, by = 0;
 
-      const onMove = e => {
-        mx = e.clientX; my = e.clientY;
+      window.addEventListener('pointermove', e => {
+        mx = e.clientX;
+        my = e.clientY;
+      });
 
-        // Check magnetic targets
-        const mag = e.target.closest('.btn, .nav-cta, .contact-links a, .magnetic');
-        ring.classList.toggle('hover', !!mag);
-
-        // Hover target for ring
-        const hoverEl = e.target.closest('a, button, .tilt, .nav-link, .footer-nav a, .footer-social a');
-        ring.classList.toggle('hover', !!hoverEl);
+      const loopBlob = () => {
+        bx += (mx - bx) * 0.06;
+        by += (my - by) * 0.06;
+        blob.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
+        requestAnimationFrame(loopBlob);
       };
-      window.addEventListener('pointermove', onMove);
-
-      const loopCursor = () => {
-        rx += (mx - rx) * 0.18;
-        ry += (my - ry) * 0.18;
-        dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
-        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-        requestAnimationFrame(loopCursor);
-      };
-      loopCursor();
+      loopBlob();
     }
   }
 
