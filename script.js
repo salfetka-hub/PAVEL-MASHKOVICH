@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const box3 = new THREE.Box3().setFromObject(model);
           const size = box3.getSize(new THREE.Vector3());
           // Scale statue to ~0.6 units tall
-          const statueHeight = 0.6;
+          const statueHeight = 1.2;
           const scale = statueHeight / size.y;
           model.scale.setScalar(scale);
           // Recompute bounds after scale
