@@ -1021,6 +1021,9 @@ section {
   .float-card-1 {
     top: -30px !important;
   }
+  .float-card-2 {
+    bottom: -30px !important;
+  }
 
   .nav {
     display: none;
