@@ -167,79 +167,170 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Starting 3D text box...');
     try {
 
-      // Canvas texture with text
+      // Canvas texture with text (high DPI)
+      const dpr = 2;
       const c = document.createElement('canvas');
-      c.width = 1024; c.height = 512;
+      c.width = 2048 * dpr; c.height = 1024 * dpr;
       const x = c.getContext('2d');
+      x.scale(dpr, dpr);
+      const W = 2048, H = 1024;
 
-      // Solid dark bg
-      x.fillStyle = 'rgba(10,14,23,0.6)';
+      // Gradient bg
+      const grad = x.createLinearGradient(0, 0, W, H);
+      grad.addColorStop(0, 'rgba(10,14,23,0.5)');
+      grad.addColorStop(0.5, 'rgba(12,30,28,0.55)');
+      grad.addColorStop(1, 'rgba(10,14,23,0.5)');
+      x.fillStyle = grad;
       x.beginPath();
-      x.moveTo(20,0); x.lineTo(1004,0);
-      x.quadraticCurveTo(1024,0,1024,20);
-      x.lineTo(1024,492);
-      x.quadraticCurveTo(1024,512,1004,512);
-      x.lineTo(20,512);
-      x.quadraticCurveTo(0,512,0,492);
-      x.lineTo(0,20);
-      x.quadraticCurveTo(0,0,20,0);
+      x.moveTo(40,0); x.lineTo(W-40,0);
+      x.quadraticCurveTo(W,0,W,40);
+      x.lineTo(W,H-40);
+      x.quadraticCurveTo(W,H,W-40,H);
+      x.lineTo(40,H);
+      x.quadraticCurveTo(0,H,0,H-40);
+      x.lineTo(0,40);
+      x.quadraticCurveTo(0,0,40,0);
       x.closePath();
       x.fill();
 
+      // Subtle grid pattern
+      x.strokeStyle = 'rgba(62,160,148,0.06)';
+      x.lineWidth = 1;
+      for (let i = 0; i < W; i += 40) {
+        x.beginPath(); x.moveTo(i,0); x.lineTo(i,H); x.stroke();
+      }
+      for (let i = 0; i < H; i += 40) {
+        x.beginPath(); x.moveTo(0,i); x.lineTo(W,i); x.stroke();
+      }
+
       x.textAlign = 'center';
       x.textBaseline = 'middle';
+
+      // Glow behind "PAVEL"
+      x.shadowColor = 'rgba(62,160,148,0.35)';
+      x.shadowBlur = 40;
       x.fillStyle = '#fff';
-      x.font = '700 72px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('PAVEL', 512, 200);
+      x.font = '800 114px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('PAVEL', W/2, 380);
+
+      // Glow behind "MASHKOVICH"
+      x.shadowColor = 'rgba(62,160,148,0.25)';
+      x.shadowBlur = 30;
       x.fillStyle = '#fff';
-      x.font = '700 72px "DM Sans","Inter Tight",sans-serif';
-      x.fillText('MASHKOVICH', 512, 310);
+      x.font = '800 90px "DM Sans","Inter Tight",sans-serif';
+      x.fillText('MASHKOVICH', W/2, 540);
+
+      // Thin teal accent line between names
+      x.shadowBlur = 0;
+      x.strokeStyle = 'rgba(62,160,148,0.25)';
+      x.lineWidth = 1.5;
+      x.beginPath();
+      x.moveTo(W/2 - 100, 460); x.lineTo(W/2 + 100, 460);
+      x.stroke();
 
       const tex = new THREE.CanvasTexture(c);
+      tex.anisotropy = 4;
       tex.needsUpdate = true;
 
       // Scene, camera, renderer
       const S = new THREE.Scene();
-      const C = new THREE.PerspectiveCamera(35, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
-      C.position.set(0, 0.4, 4.8);
+      const C = new THREE.PerspectiveCamera(32, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
+      C.position.set(0, 0.6, 5.2);
       const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       R.setSize(wrap.clientWidth, wrap.clientHeight);
+      R.toneMapping = THREE.ACESFilmicToneMapping;
+      R.toneMappingExposure = 1.1;
 
       // Lights
-      S.add(new THREE.AmbientLight(0xffffff, 0.6));
-      const DL = new THREE.DirectionalLight(0xffffff, 1.2);
-      DL.position.set(3, 5, 4);
-      S.add(DL);
+      S.add(new THREE.AmbientLight(0x404060, 0.3));
 
-      // Box
+      const key = new THREE.DirectionalLight(0xffffff, 1.4);
+      key.position.set(4, 6, 5);
+      S.add(key);
+
+      const fill = new THREE.DirectionalLight(0x3ea094, 0.5);
+      fill.position.set(-3, 1, 2);
+      S.add(fill);
+
+      const rim = new THREE.DirectionalLight(0x7c5cff, 0.4);
+      rim.position.set(0, -3, -4);
+      S.add(rim);
+
+      // Box (textured)
       const M = new THREE.MeshStandardMaterial({
-        map: tex, roughness: 0.15, metalness: 0.0, transparent: true, side: THREE.DoubleSide
+        map: tex, roughness: 0.12, metalness: 0.0, transparent: true,
+        side: THREE.DoubleSide, envMapIntensity: 0.6
       });
-      const box = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 1.4), M);
-      box.position.z = 0.8;
+      const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), M);
+      box.position.z = 0.6;
       S.add(box);
 
-      // Wireframe edge
+      // Wireframe edge (double)
       const EM = new THREE.MeshBasicMaterial({
-        color: 0x3ea094, wireframe: true, transparent: true, opacity: 0.18
+        color: 0x3ea094, wireframe: true, transparent: true, opacity: 0.3
       });
-      const edge = new THREE.Mesh(new THREE.BoxGeometry(2.72, 0.52, 1.52), EM);
+      const edge = new THREE.Mesh(new THREE.BoxGeometry(2.92, 0.47, 1.52), EM);
       edge.position.copy(box.position);
       S.add(edge);
+
+      const EM2 = new THREE.MeshBasicMaterial({
+        color: 0x7c5cff, wireframe: true, transparent: true, opacity: 0.12
+      });
+      const edge2 = new THREE.Mesh(new THREE.BoxGeometry(3.04, 0.59, 1.64), EM2);
+      edge2.position.copy(box.position);
+      S.add(edge2);
+
+      // Orbiting particles
+      const pCount = 300;
+      const pos = new Float32Array(pCount * 3);
+      const sizes = new Float32Array(pCount);
+      for (let i = 0; i < pCount; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const r = 1.8 + Math.random() * 1.6;
+        pos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+        pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+        pos[i*3+2] = r * Math.cos(phi);
+        sizes[i] = 0.02 + Math.random() * 0.04;
+      }
+      const pGeo = new THREE.BufferGeometry();
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      pGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+      const pMat = new THREE.PointsMaterial({
+        color: 0x3ea094, size: 0.04, transparent: true, opacity: 0.5,
+        blending: THREE.AdditiveBlending
+      });
+      const particles = new THREE.Points(pGeo, pMat);
+      S.add(particles);
 
       // Animation
       const clock = new THREE.Clock();
       const anim = () => {
         requestAnimationFrame(anim);
         const t = clock.getElapsedTime();
-        const fy = Math.sin(t * 0.5) * 1.5;
+
+        // Float Y (smooth up/down)
+        const fy = Math.sin(t * 0.55) * 1.6;
+
         box.position.y = fy;
-        box.rotation.y = t * 0.45;
-        box.rotation.x = Math.sin(t * 0.2) * 0.06;
-        edge.position.y = fy;
-        edge.rotation.y = t * 0.45;
-        edge.rotation.x = Math.sin(t * 0.2) * 0.06;
+        box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08;
+        box.rotation.x = Math.sin(t * 0.22) * 0.08;
+        box.rotation.z = Math.cos(t * 0.15) * 0.04;
+
+        edge.position.copy(box.position);
+        edge.rotation.copy(box.rotation);
+        edge2.position.copy(box.position);
+        edge2.rotation.copy(box.rotation);
+
+        // Particles
+        particles.rotation.y = t * 0.08;
+        particles.rotation.x = Math.sin(t * 0.03) * 0.1;
+
+        // Moving lights
+        key.position.x = 4 + Math.sin(t * 0.3) * 1.5;
+        key.position.z = 5 + Math.cos(t * 0.4) * 1.5;
+
         R.render(S, C);
       };
       anim();
