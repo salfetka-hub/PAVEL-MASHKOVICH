@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Scene, camera, renderer
       const S = new THREE.Scene();
       const C = new THREE.PerspectiveCamera(32, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
-      C.position.set(0, 0.3, 5.8);
+      C.position.set(0, -0.5, 5.8);
       const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       R.setSize(wrap.clientWidth, wrap.clientHeight);
