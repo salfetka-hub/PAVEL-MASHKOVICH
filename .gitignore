@@ -1,0 +1,8 @@
+
+# Temp files
+Ali and Nino.blend
+ali-and-nino2.zip
+ali-and-nino3.zip
+ali-and-nino4.zip
+*.zip
+!ali-and-nino.zip
