@@ -82,69 +82,52 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.split-word, .split-char, .reveal-l, .reveal-r, .reveal-scale')
     .forEach(el => splitObserver.observe(el));
 
-  // ── 3D TILT ON CARDS (rAF-throttled, delegated) ──
+  // ── 3D TILT ON CARDS ──
   if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
     const grid = document.querySelector('.services-grid');
     if (!grid) return;
 
-    let rafId = null;
-    let active = null;
-    let mx = 0, my = 0, rx = 0, ry = 0;
+    let active = null, shineRaf = null;
+    let sx = 0.5, sy = 0.5;
 
-    const apply = () => {
-      rafId = null;
-      if (!active) return;
-      const shine = active.querySelector('.card-shine');
-      active.style.transform =
-        `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
-      if (shine) {
-        shine.style.setProperty('opacity', '1');
-        const px = (mx + 1) / 2;
-        const py = (my + 1) / 2;
-        shine.style.background =
-          `radial-gradient(420px circle at ${px * 100}% ${py * 100}%, rgba(62,160,148,0.18), transparent 60%)`;
-      }
+    const resetCard = (card) => {
+      if (!card) return;
+      card.style.transform = '';
+      const s = card.querySelector('.card-shine');
+      if (s) { s.style.opacity = '0'; }
     };
 
-    const schedule = () => {
-      if (!rafId) rafId = requestAnimationFrame(apply);
+    const updateShine = () => {
+      shineRaf = null;
+      if (!active) return;
+      const s = active.querySelector('.card-shine');
+      if (!s) return;
+      s.style.background =
+        `radial-gradient(380px circle at ${sx * 100}% ${sy * 100}%, rgba(62,160,148,0.18), transparent 60%)`;
     };
 
     grid.addEventListener('pointermove', e => {
       const card = e.target.closest('.tilt');
-      if (!card) {
-        if (active) {
-          active.style.transform = '';
-          const s = active.querySelector('.card-shine');
-          if (s) s.style.opacity = '0';
-          active = null;
-        }
-        return;
-      }
-      if (active !== card) {
-        if (active) {
-          active.style.transform = '';
-          const s = active.querySelector('.card-shine');
-          if (s) s.style.opacity = '0';
-        }
-        active = card;
-      }
+      if (!card) { resetCard(active); active = null; return; }
+      if (active !== card) { resetCard(active); active = card; }
+
       const r = card.getBoundingClientRect();
-      mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-      my = ((e.clientY - r.top) / r.height - 0.5) * 2;
-      rx = -my * 10;
-      ry = mx * 12;
-      schedule();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      const dx = px - 0.5;
+      const dy = py - 0.5;
+
+      card.style.transform =
+        `perspective(700px) rotateX(${-dy * 18}deg) rotateY(${dx * 20}deg) translateY(-4px)`;
+
+      sx = px; sy = py;
+      if (!shineRaf) shineRaf = requestAnimationFrame(updateShine);
     });
 
     grid.addEventListener('pointerleave', () => {
-      if (active) {
-        active.style.transform = '';
-        const s = active.querySelector('.card-shine');
-        if (s) s.style.opacity = '0';
-        active = null;
-      }
-      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      resetCard(active);
+      active = null;
+      if (shineRaf) { cancelAnimationFrame(shineRaf); shineRaf = null; }
     });
   }
 
