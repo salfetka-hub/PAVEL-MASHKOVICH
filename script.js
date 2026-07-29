@@ -371,9 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const edge = new THREE.LineSegments(EG, EL);
       box.add(edge);
 
-      // Hide box until statue loads so they appear together
-      box.visible = false;
-
       // ── Load Ali & Nino statue ──
       if (typeof THREE.GLTFLoader !== 'undefined') {
         const loader = new THREE.GLTFLoader();
@@ -395,17 +392,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (child.isMesh) {
               child.material = new THREE.MeshStandardMaterial({
                 color: 0x3ea094, roughness: 0.05, metalness: 0.7,
-                envMap: envTex, envMapIntensity: 2.5
+                envMap: envTex, envMapIntensity: 2.5,
+                transparent: true, opacity: 0
               });
             }
           });
           box.add(model);
-          // Show box + statue together
-          box.visible = true;
+          // Fade in statue
+          let st = 0;
+          const fadeStatue = () => {
+            st += 0.04;
+            if (st >= 1) {
+              st = 1;
+              model.traverse(c => { if (c.isMesh) c.material.transparent = false; });
+              return;
+            }
+            model.traverse(c => { if (c.isMesh) c.material.opacity = st; });
+            requestAnimationFrame(fadeStatue);
+          };
+          fadeStatue();
         }, undefined, function (err) {
           console.warn('Statue load error:', err);
-          // Show box even if statue fails
-          box.visible = true;
         });
       }
 
