@@ -276,23 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
       tex.anisotropy = 4;
       tex.needsUpdate = true;
 
-      // Environment map for glossy reflections (bright spot on right)
+      // Fake environment map for glossy reflections
       const EC = document.createElement('canvas');
-      EC.width = 1024; EC.height = 512;
+      EC.width = 32; EC.height = 16;
       const EX = EC.getContext('2d');
-      EX.fillStyle = '#08080c';
-      EX.fillRect(0, 0, 1024, 512);
-      const eg = EX.createRadialGradient(780, 260, 0, 780, 260, 320);
-      eg.addColorStop(0, 'rgba(255,245,230,0.9)');
-      eg.addColorStop(0.4, 'rgba(255,245,230,0.2)');
-      eg.addColorStop(1, 'rgba(0,0,0,0)');
-      EX.fillStyle = eg;
-      EX.fillRect(0, 0, 1024, 512);
-      const eg2 = EX.createRadialGradient(200, 300, 0, 200, 300, 200);
-      eg2.addColorStop(0, 'rgba(62,160,148,0.06)');
-      eg2.addColorStop(1, 'rgba(0,0,0,0)');
-      EX.fillStyle = eg2;
-      EX.fillRect(0, 0, 1024, 512);
+      EX.fillStyle = '#0a0a0e';
+      EX.fillRect(0, 0, 32, 16);
       const envTex = new THREE.CanvasTexture(EC);
       envTex.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -309,10 +298,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Lights
       S.add(new THREE.AmbientLight(0x202040, 0.25));
 
-      // Main spotlight (attached to box, always on the right side)
-      const key = new THREE.DirectionalLight(0xfff5e8, 3.0);
-      key.position.set(2.5, 0.8, 0);
-      box.add(key);
+      // Main spotlight from the right
+      const key = new THREE.DirectionalLight(0xfff5e8, 3.5);
+      key.position.set(6, 2, 1);
+      S.add(key);
 
       // Fill from front-left (soft)
       const fill = new THREE.DirectionalLight(0x3ea094, 0.3);
@@ -326,12 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Box materials: [right, left, top, bottom, front, back]
       const blackMat = new THREE.MeshStandardMaterial({
-        color: 0x0a0a0a, roughness: 0.01, metalness: 0.0,
-        envMap: envTex, envMapIntensity: 1.8
+        color: 0x0a0a0a, roughness: 0.01, metalness: 0.0
       });
       const texMat = new THREE.MeshStandardMaterial({
-        map: tex, roughness: 0.01, metalness: 0.0, side: THREE.DoubleSide,
-        envMap: envTex, envMapIntensity: 1.6
+        map: tex, roughness: 0.01, metalness: 0.0, side: THREE.DoubleSide
       });
       const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), [
         texMat, texMat, blackMat, blackMat, texMat, texMat
@@ -376,6 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
         box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08 + tx * 0.15;
         box.rotation.x = Math.sin(t * 0.22) * 0.08 + ty * 0.12;
         box.rotation.z = Math.cos(t * 0.15) * 0.04 + tx * ty * 0.04;
+
+        key.position.y = 2 + Math.sin(t * 0.3) * 1.2;
 
         R.render(S, C);
       };
