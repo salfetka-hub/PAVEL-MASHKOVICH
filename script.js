@@ -204,6 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loopFloats();
   }
 
+  // ── MOBILE FLOAT CARD POSITIONS ──
+  if (window.innerWidth <= 768) {
+    const fc1 = document.querySelector('.float-card-1');
+    const fc2 = document.querySelector('.float-card-2');
+    if (fc1) { fc1.style.setProperty('top', '-30px', 'important'); fc1.style.setProperty('bottom', 'auto', 'important'); }
+    if (fc2) { fc2.style.setProperty('bottom', '0', 'important'); fc2.style.setProperty('top', 'auto', 'important'); }
+  }
+
   // ── WEBGL 3D TEXT BOX ──
   (function init3D() {
     const canvas = document.getElementById('webgl');
