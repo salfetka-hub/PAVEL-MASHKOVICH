@@ -371,6 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const edge = new THREE.LineSegments(EG, EL);
       box.add(edge);
 
+      // Hide box until statue loads so they appear together
+      box.visible = false;
+
       // ── Load Ali & Nino statue ──
       if (typeof THREE.GLTFLoader !== 'undefined') {
         const loader = new THREE.GLTFLoader();
@@ -397,8 +400,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
           box.add(model);
+          // Show box + statue together
+          box.visible = true;
         }, undefined, function (err) {
           console.warn('Statue load error:', err);
+          // Show box even if statue fails
+          box.visible = true;
         });
       }
 
