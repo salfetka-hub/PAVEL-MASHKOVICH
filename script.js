@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const dy = py - 0.5;
 
       card.style.transform =
-        `perspective(700px) rotateX(${-dy * 18}deg) rotateY(${dx * 20}deg) translateY(-4px)`;
+        `perspective(700px) rotateX(${-dy * 10}deg) rotateY(${dx * 12}deg) translateY(-3px)`;
 
       sx = px; sy = py;
       if (!shineRaf) shineRaf = requestAnimationFrame(updateShine);
@@ -167,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.btn, .nav-cta, .contact-links a').forEach(el => {
       el.addEventListener('pointermove', e => {
         const r = el.getBoundingClientRect();
-        const dx = (e.clientX - r.left - r.width / 2) * 0.15;
-        const dy = (e.clientY - r.top - r.height / 2) * 0.15;
+        const dx = Math.max(-6, Math.min(6, (e.clientX - r.left - r.width / 2) * 0.1));
+        const dy = Math.max(-6, Math.min(6, (e.clientY - r.top - r.height / 2) * 0.1));
         el.style.transform = el.classList.contains('btn') || el.classList.contains('nav-cta')
           ? `translate3d(${dx}px, ${dy - 3}px, 0)`
           : `translate3d(${dx}px, ${dy}px, 0)`;
