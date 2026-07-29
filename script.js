@@ -363,6 +363,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const edge = new THREE.LineSegments(EG, EL);
       box.add(edge);
 
+      // ── Load Ali & Nino statue ──
+      if (typeof THREE.GLTFLoader !== 'undefined') {
+        const loader = new THREE.GLTFLoader();
+        loader.load('ali-and-nino/source/ali-and-nino.glb', function (gltf) {
+          const model = gltf.scene;
+          // Compute bounding box to position feet on top of box
+          const box3 = new THREE.Box3().setFromObject(model);
+          const size = box3.getSize(new THREE.Vector3());
+          // Scale statue to ~0.6 units tall
+          const statueHeight = 0.6;
+          const scale = statueHeight / size.y;
+          model.scale.setScalar(scale);
+          // Recompute bounds after scale
+          const sb = new THREE.Box3().setFromObject(model);
+          const sf = sb.min.y;
+          model.position.y = 0.175 - sf; // feet on top face
+          // Mirror the glossy material
+          model.traverse(function (child) {
+            if (child.isMesh) {
+              child.material = new THREE.MeshStandardMaterial({
+                color: 0x3ea094, roughness: 0.05, metalness: 0.7,
+                envMap: envTex, envMapIntensity: 2.5
+              });
+            }
+          });
+          box.add(model);
+        }, undefined, function (err) {
+          console.warn('Statue load error:', err);
+        });
+      }
+
       // Animation
       // Mouse tilt on scene
       let mx = 0, my = 0, tx = 0, ty = 0;
