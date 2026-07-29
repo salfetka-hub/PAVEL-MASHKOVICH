@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
       S.add(new THREE.AmbientLight(0x202040, 0.25));
 
       // Main spotlight from the right
-      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+      const key = new THREE.DirectionalLight(0xfff5e8, 2.0);
       key.position.set(5, 1.5, 0.5);
       S.add(key);
 
@@ -306,10 +306,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Box materials: [right, left, top, bottom, front, back]
       const blackMat = new THREE.MeshStandardMaterial({
-        color: 0x0a0a0a, roughness: 0.08, metalness: 0.4
+        color: 0x0a0a0a, roughness: 0.02, metalness: 0.0
       });
       const texMat = new THREE.MeshStandardMaterial({
-        map: tex, roughness: 0.06, metalness: 0.3, side: THREE.DoubleSide
+        map: tex, roughness: 0.02, metalness: 0.0, side: THREE.DoubleSide
       });
       const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), [
         texMat, texMat, blackMat, blackMat, texMat, texMat
