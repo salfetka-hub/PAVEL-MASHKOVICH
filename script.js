@@ -363,6 +363,60 @@ document.addEventListener('DOMContentLoaded', () => {
       const edge = new THREE.LineSegments(EG, EL);
       box.add(edge);
 
+      // ── Abstract Ali & Nino Statue on top of the box ──
+      const statueMat = new THREE.MeshStandardMaterial({
+        color: 0x3ea094, roughness: 0.05, metalness: 0.6,
+        envMap: envTex, envMapIntensity: 2.5
+      });
+      const statueGroup = new THREE.Group();
+      const topY = 0.175; // top face of box in local space
+
+      function makeFig(px, height, tilt) {
+        const g = new THREE.Group();
+
+        // Torso
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, height * 0.55, 8), statueMat);
+        body.position.y = height * 0.35;
+        g.add(body);
+
+        // Head
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 8), statueMat);
+        head.position.y = height * 0.72;
+        g.add(head);
+
+        // Left leg
+        const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, height * 0.22, 6), statueMat);
+        legL.position.set(-0.04, height * 0.1, 0);
+        g.add(legL);
+
+        // Right leg
+        const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, height * 0.22, 6), statueMat);
+        legR.position.set(0.04, height * 0.1, 0);
+        g.add(legR);
+
+        // Arm reaching forward
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, height * 0.3, 6), statueMat);
+        arm.position.set(px > 0 ? 0.06 : -0.06, height * 0.55, 0.05);
+        arm.rotation.z = px > 0 ? -0.6 : 0.6;
+        arm.rotation.x = 0.4;
+        g.add(arm);
+
+        g.position.x = px;
+        g.position.y = topY;
+        g.rotation.z = tilt;
+        return g;
+      }
+
+      // Ali (left figure, reaching right)
+      const ali = makeFig(-0.35, 0.75, -0.04);
+      statueGroup.add(ali);
+
+      // Nino (right figure, reaching left)
+      const nino = makeFig(0.35, 0.68, 0.04);
+      statueGroup.add(nino);
+
+      box.add(statueGroup);
+
       // Animation
       // Mouse tilt on scene
       let mx = 0, my = 0, tx = 0, ty = 0;
