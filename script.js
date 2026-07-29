@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     scene.add(dust);
 
-    // ── TEXT BOX ──
+    // ── TEXT BOX (front layer) ──
     const textCanvas = document.createElement('canvas');
     textCanvas.width = 1024;
     textCanvas.height = 512;
@@ -241,26 +241,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ctx.clearRect(0, 0, 1024, 512);
 
-    // Background (transparent)
     ctx.fillStyle = 'rgba(10, 14, 23, 0.55)';
     ctx.roundRect(0, 0, 1024, 512, 24);
     ctx.fill();
 
-    // Text
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // "PAVEL"
     ctx.fillStyle = '#ffffff';
     ctx.font = '700 96px "DM Sans", "Inter Tight", sans-serif';
     ctx.fillText('PAVEL', 512, 190);
 
-    // "//"
     ctx.fillStyle = '#3ea094';
     ctx.font = '600 72px "DM Sans", "Inter Tight", sans-serif';
     ctx.fillText('//', 512, 290);
 
-    // "MASHKOVICH"
     ctx.fillStyle = '#ffffff';
     ctx.font = '700 96px "DM Sans", "Inter Tight", sans-serif';
     ctx.fillText('MASHKOVICH', 512, 390);
@@ -280,10 +275,9 @@ document.addEventListener('DOMContentLoaded', () => {
       new THREE.BoxGeometry(2.8, 0.4, 1.6),
       boxMat
     );
-    textBox.position.set(0, -4, -1.5);
+    textBox.position.set(0, -3, 1.8);
     scene.add(textBox);
 
-    // Outline glow around box
     const edgeMat = new THREE.MeshBasicMaterial({
       color: 0x3ea094,
       wireframe: true,
@@ -337,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
       teal.position.z = Math.sin(t * 0.6) * 4.5;
 
       // Text box animation: float bottom → top + rotate
-      const floatY = -2.8 + (Math.sin(t * 0.35) * 0.5 + 0.5) * 5.6;
+      const floatY = Math.sin(t * 0.5) * 1.6;
       textBox.position.y = floatY;
       textBox.rotation.y = t * 0.4;
       textBox.rotation.x = Math.sin(t * 0.2) * 0.08;
