@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Scene, camera, renderer
       const S = new THREE.Scene();
       const C = new THREE.PerspectiveCamera(32, wrap.clientWidth / wrap.clientHeight, 0.1, 20);
-      C.position.set(0, 0.6, 5.2);
+      C.position.set(0, 0.3, 5.8);
       const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       R.setSize(wrap.clientWidth, wrap.clientHeight);
@@ -327,14 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const EM = new THREE.MeshBasicMaterial({
         color: 0x3ea094, wireframe: true, transparent: true, opacity: 0.3
       });
-      const edge = new THREE.Mesh(new THREE.BoxGeometry(2.92, 0.47, 1.52), EM);
+      const edge = new THREE.Mesh(new THREE.BoxGeometry(2.88, 0.43, 1.48), EM);
       edge.position.copy(box.position);
       S.add(edge);
 
       const EM2 = new THREE.MeshBasicMaterial({
-        color: 0x7c5cff, wireframe: true, transparent: true, opacity: 0.12
+        color: 0x7c5cff, wireframe: true, transparent: true, opacity: 0.1
       });
-      const edge2 = new THREE.Mesh(new THREE.BoxGeometry(3.04, 0.59, 1.64), EM2);
+      const edge2 = new THREE.Mesh(new THREE.BoxGeometry(2.96, 0.51, 1.56), EM2);
       edge2.position.copy(box.position);
       S.add(edge2);
 
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let i = 0; i < pCount; i++) {
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        const r = 1.8 + Math.random() * 1.6;
+        const r = 1.2 + Math.random() * 1.0;
         pos[i*3] = r * Math.sin(phi) * Math.cos(theta);
         pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
         pos[i*3+2] = r * Math.cos(phi);
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const t = clock.getElapsedTime();
 
         // Float Y (smooth up/down)
-        const fy = Math.sin(t * 0.55) * 1.6;
+        const fy = Math.sin(t * 0.5) * 0.4;
 
         box.position.y = fy;
         box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08;
