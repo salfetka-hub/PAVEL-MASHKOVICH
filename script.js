@@ -356,18 +356,34 @@ document.addEventListener('DOMContentLoaded', () => {
       S.add(particles);
 
       // Animation
+      // Mouse tilt on scene
+      let mx = 0, my = 0, tx = 0, ty = 0;
+
+      if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
+        wrap.addEventListener('pointermove', e => {
+          const r = wrap.getBoundingClientRect();
+          mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+          my = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        });
+        wrap.addEventListener('pointerleave', () => { mx = 0; my = 0; });
+      }
+
       const clock = new THREE.Clock();
       const anim = () => {
         requestAnimationFrame(anim);
         const t = clock.getElapsedTime();
 
+        // Mouse tilt (spring back)
+        tx += (mx - tx) * 0.08;
+        ty += (my - ty) * 0.08;
+
         // Float Y (smooth up/down)
         const fy = Math.sin(t * 0.5) * 0.4;
 
         box.position.y = fy;
-        box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08;
-        box.rotation.x = Math.sin(t * 0.22) * 0.08;
-        box.rotation.z = Math.cos(t * 0.15) * 0.04;
+        box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08 + tx * 0.15;
+        box.rotation.x = Math.sin(t * 0.22) * 0.08 + ty * 0.12;
+        box.rotation.z = Math.cos(t * 0.15) * 0.04 + tx * ty * 0.04;
 
         edge.position.copy(box.position);
         edge.rotation.copy(box.rotation);
