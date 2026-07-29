@@ -42,6 +42,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
+  // ── SPLIT TEXT ANIMATION ──
+  document.querySelectorAll('.section-title').forEach(title => {
+    const words = title.textContent.trim().split(/\s+/);
+    title.textContent = '';
+    words.forEach((word, i) => {
+      const span = document.createElement('span');
+      span.className = 'split-word';
+      span.textContent = word;
+      span.style.transitionDelay = `${i * 0.12}s`;
+      title.appendChild(span);
+      if (i < words.length - 1) title.append(' ');
+    });
+  });
+
+  document.querySelectorAll('.section-tag').forEach(tag => {
+    const chars = tag.textContent.trim().split('');
+    tag.textContent = '';
+    chars.forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'split-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.transitionDelay = `${i * 0.04}s`;
+      tag.appendChild(span);
+    });
+  });
+
+  const splitObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const delay = parseFloat(el.dataset.revealDelay) || 0;
+        setTimeout(() => el.classList.add('visible'), delay * 1000);
+        splitObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.split-word, .split-char, .reveal-l, .reveal-r, .reveal-scale')
+    .forEach(el => splitObserver.observe(el));
+
   // ── 3D TILT ON CARDS ──
   if (!reducedMotion && window.matchMedia('(hover: hover)').matches) {
     document.querySelectorAll('.tilt').forEach(card => {
