@@ -331,13 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
       edge.position.copy(box.position);
       S.add(edge);
 
-      const EM2 = new THREE.MeshBasicMaterial({
-        color: 0x7c5cff, wireframe: true, transparent: true, opacity: 0.1
-      });
-      const edge2 = new THREE.Mesh(new THREE.BoxGeometry(2.96, 0.51, 1.56), EM2);
-      edge2.position.copy(box.position);
-      S.add(edge2);
-
       // Orbiting particles
       const pCount = 300;
       const pos = new Float32Array(pCount * 3);
@@ -377,8 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         edge.position.copy(box.position);
         edge.rotation.copy(box.rotation);
-        edge2.position.copy(box.position);
-        edge2.rotation.copy(box.rotation);
 
         // Particles
         particles.rotation.y = t * 0.08;
