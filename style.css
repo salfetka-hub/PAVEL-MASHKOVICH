@@ -454,7 +454,6 @@ body {
 
 /* ==== HERO TICKER ==== */
 .hero-ticker {
-  position: relative;
   margin-top: 60px;
   padding: 18px 0;
   border-top: 1px solid var(--border);
@@ -536,97 +535,6 @@ section {
   font-size: 1rem;
   max-width: 540px;
   line-height: 1.75;
-}
-
-/* ==== DARK THEME (second half) ==== */
-.dark-section {
-  --bg: #0c0c14;
-  --bg-alt: #11111c;
-  --bg-card: #12121e;
-  --text: #e4e4ec;
-  --text-secondary: #8888a0;
-  --text-muted: #5a5a72;
-  --border: rgba(255,255,255,0.06);
-  --border-light: rgba(255,255,255,0.04);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
-  --shadow-md: 0 12px 32px -8px rgba(0,0,0,0.4);
-  --shadow-lg: 0 32px 64px -16px rgba(0,0,0,0.5);
-  background: linear-gradient(180deg, #0c0c14 0%, #0a0a12 100%);
-}
-
-.dark-section .section-tag {
-  color: #7fd8cb;
-  border-color: rgba(127,216,203,0.2);
-  background: rgba(127,216,203,0.06);
-}
-
-.dark-section .service-card {
-  background: rgba(18,18,30,0.8);
-  border-color: rgba(255,255,255,0.06);
-}
-
-.dark-section .service-card:hover {
-  border-color: rgba(62,160,148,0.3);
-}
-
-.dark-section .service-card h3,
-.dark-section .process-content h3 {
-  color: #e4e4ec;
-}
-
-.dark-section .card-inner > p,
-.dark-section .process-content p {
-  color: #8888a0;
-}
-
-.dark-section .card-icon {
-  background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
-  border-color: rgba(62,160,148,0.15);
-}
-
-.dark-section .card-number {
-  -webkit-text-stroke-color: rgba(255,255,255,0.06);
-}
-
-.dark-section .service-card:hover .card-number {
-  -webkit-text-stroke-color: rgba(62,160,148,0.2);
-}
-
-.dark-section .card-tags span {
-  background: rgba(62,160,148,0.08);
-  border-color: rgba(62,160,148,0.12);
-}
-
-.dark-section .process-list::before {
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.06) 12%, rgba(255,255,255,0.06) 88%, transparent);
-}
-
-.dark-section .process-num {
-  color: #5a5a72;
-  background: #12121e;
-  border-color: rgba(255,255,255,0.06);
-}
-
-.dark-section .process-item:hover .process-num {
-  color: #fff;
-  border-color: transparent;
-  background: linear-gradient(145deg, var(--accent), var(--accent-dark));
-}
-
-/* ==== LIGHT-TO-DARK TRANSITION ==== */
-.hero-ticker {
-  position: relative;
-}
-
-.hero-ticker::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0; right: 0;
-  height: 80px;
-  background: linear-gradient(180deg, transparent, #0c0c14);
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* ==== SERVICES (3D tilt cards) ==== */
@@ -925,30 +833,6 @@ section {
 .footer {
   border-top: 1px solid var(--border);
   padding: 48px 0 32px;
-}
-
-.dark-section.footer .footer-nav a {
-  color: #8888a0;
-}
-
-.dark-section.footer .footer-nav a:hover {
-  color: var(--accent);
-}
-
-.dark-section.footer .footer-social a {
-  background: rgba(255,255,255,0.04);
-  border-color: rgba(255,255,255,0.06);
-  color: #5a5a72;
-}
-
-.dark-section.footer .footer-social a:hover {
-  color: var(--accent);
-  border-color: rgba(62,160,148,0.3);
-}
-
-.dark-section.footer .footer-bottom {
-  border-top-color: rgba(255,255,255,0.04);
-  color: #5a5a72;
 }
 
 .footer-top {
