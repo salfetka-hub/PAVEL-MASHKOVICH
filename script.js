@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     scene.add(dust);
 
-    // ── TEXT BOX (front layer) ──
+    // ── TEXT BOX ──
     const textCanvas = document.createElement('canvas');
     textCanvas.width = 1024;
     textCanvas.height = 512;
@@ -218,51 +218,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ctx.clearRect(0, 0, 1024, 512);
 
+    // rounded rect
     ctx.fillStyle = 'rgba(10, 14, 23, 0.55)';
-    ctx.roundRect(0, 0, 1024, 512, 24);
+    const rr = 24, cw = 1024, ch = 512;
+    ctx.beginPath();
+    ctx.moveTo(rr, 0); ctx.lineTo(cw - rr, 0);
+    ctx.quadraticCurveTo(cw, 0, cw, rr);
+    ctx.lineTo(cw, ch - rr);
+    ctx.quadraticCurveTo(cw, ch, cw - rr, ch);
+    ctx.lineTo(rr, ch);
+    ctx.quadraticCurveTo(0, ch, 0, ch - rr);
+    ctx.lineTo(0, rr);
+    ctx.quadraticCurveTo(0, 0, rr, 0);
+    ctx.closePath();
     ctx.fill();
 
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = '700 96px "DM Sans", "Inter Tight", sans-serif';
-    ctx.fillText('PAVEL', 512, 190);
+    ctx.font = '700 86px "DM Sans", "Inter Tight", sans-serif';
+    ctx.fillText('PAVEL', 512, 170);
 
     ctx.fillStyle = '#3ea094';
-    ctx.font = '600 72px "DM Sans", "Inter Tight", sans-serif';
-    ctx.fillText('//', 512, 290);
+    ctx.font = '600 64px "DM Sans", "Inter Tight", sans-serif';
+    ctx.fillText('//', 512, 256);
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = '700 96px "DM Sans", "Inter Tight", sans-serif';
-    ctx.fillText('MASHKOVICH', 512, 390);
+    ctx.font = '700 86px "DM Sans", "Inter Tight", sans-serif';
+    ctx.fillText('MASHKOVICH', 512, 348);
 
     const textTex = new THREE.CanvasTexture(textCanvas);
     textTex.needsUpdate = true;
 
     const boxMat = new THREE.MeshStandardMaterial({
       map: textTex,
-      roughness: 0.25,
-      metalness: 0.1,
+      roughness: 0.2,
+      metalness: 0.05,
       transparent: true,
       side: THREE.DoubleSide
     });
 
     const textBox = new THREE.Mesh(
-      new THREE.BoxGeometry(2.8, 0.4, 1.6),
+      new THREE.BoxGeometry(3.2, 0.45, 1.8),
       boxMat
     );
-    textBox.position.set(0, -3, 1.8);
+    textBox.position.z = 1.6;
     scene.add(textBox);
 
     const edgeMat = new THREE.MeshBasicMaterial({
       color: 0x3ea094,
       wireframe: true,
       transparent: true,
-      opacity: 0.25
+      opacity: 0.2
     });
     const edgeBox = new THREE.Mesh(
-      new THREE.BoxGeometry(2.9, 0.5, 1.7),
+      new THREE.BoxGeometry(3.32, 0.57, 1.92),
       edgeMat
     );
     edgeBox.position.copy(textBox.position);
@@ -300,16 +311,16 @@ document.addEventListener('DOMContentLoaded', () => {
       teal.position.z = Math.sin(t * 0.6) * 4.5;
 
       // Text box animation: float bottom → top + rotate
-      const floatY = Math.sin(t * 0.5) * 1.6;
+      const floatY = Math.sin(t * 0.6) * 1.8;
       textBox.position.y = floatY;
-      textBox.rotation.y = t * 0.4;
-      textBox.rotation.x = Math.sin(t * 0.2) * 0.08;
-      textBox.rotation.z = Math.cos(t * 0.15) * 0.04;
+      textBox.rotation.y = t * 0.5;
+      textBox.rotation.x = Math.sin(t * 0.25) * 0.1;
+      textBox.rotation.z = Math.cos(t * 0.18) * 0.05;
 
       edgeBox.position.y = floatY;
-      edgeBox.rotation.y = t * 0.4;
-      edgeBox.rotation.x = Math.sin(t * 0.2) * 0.08;
-      edgeBox.rotation.z = Math.cos(t * 0.15) * 0.04;
+      edgeBox.rotation.y = t * 0.5;
+      edgeBox.rotation.x = Math.sin(t * 0.25) * 0.1;
+      edgeBox.rotation.z = Math.cos(t * 0.18) * 0.05;
 
       renderer.render(scene, camera);
     };
