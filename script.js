@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ty += (my - ty) * 0.08;
 
         // Float Y (smooth up/down)
-        const fy = Math.sin(t * 0.5) * 0.4;
+        const fy = Math.sin(t * 0.5) * 0.2 - 0.1;
 
         box.position.y = fy;
         box.rotation.y = t * 0.5 + Math.sin(t * 0.12) * 0.08 + tx * 0.15;
