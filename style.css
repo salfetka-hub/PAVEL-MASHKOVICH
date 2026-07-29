@@ -1018,6 +1018,10 @@ section {
 }
 
 @media (max-width: 768px) {
+  .float-card-1 {
+    top: 1%;
+  }
+
   .nav {
     display: none;
     position: fixed;
