@@ -1009,7 +1009,7 @@ section {
     order: -1;
   }
 
-  .float-card-1 { left: 2%; }
+  .float-card-1 { top: 2%; left: 2%; }
   .float-card-2 { right: 2%; }
 
   .services-grid {
@@ -1019,7 +1019,7 @@ section {
 
 @media (max-width: 768px) {
   .float-card-1 {
-    top: 1%;
+    top: -4%;
   }
 
   .nav {
