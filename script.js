@@ -287,26 +287,29 @@ document.addEventListener('DOMContentLoaded', () => {
       R.toneMappingExposure = 1.1;
 
       // Lights
-      S.add(new THREE.AmbientLight(0x404060, 0.3));
+      S.add(new THREE.AmbientLight(0x202040, 0.25));
 
-      const key = new THREE.DirectionalLight(0xffffff, 1.4);
-      key.position.set(4, 6, 5);
+      // Main spotlight from the right
+      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+      key.position.set(5, 1.5, 0.5);
       S.add(key);
 
-      const fill = new THREE.DirectionalLight(0x3ea094, 0.5);
-      fill.position.set(-3, 1, 2);
+      // Fill from front-left (soft)
+      const fill = new THREE.DirectionalLight(0x3ea094, 0.3);
+      fill.position.set(-3, 0, 2);
       S.add(fill);
 
-      const rim = new THREE.DirectionalLight(0x7c5cff, 0.4);
-      rim.position.set(0, -3, -4);
+      // Rim from behind
+      const rim = new THREE.DirectionalLight(0x7c5cff, 0.3);
+      rim.position.set(0, -2, -4);
       S.add(rim);
 
       // Box materials: [right, left, top, bottom, front, back]
       const blackMat = new THREE.MeshStandardMaterial({
-        color: 0x0a0a0a, roughness: 0.2, metalness: 0.0
+        color: 0x0a0a0a, roughness: 0.08, metalness: 0.4
       });
       const texMat = new THREE.MeshStandardMaterial({
-        map: tex, roughness: 0.2, metalness: 0.0, side: THREE.DoubleSide
+        map: tex, roughness: 0.06, metalness: 0.3, side: THREE.DoubleSide
       });
       const box = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.35, 1.4), [
         texMat, texMat, blackMat, blackMat, texMat, texMat
@@ -356,9 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
         edge.position.copy(box.position);
         edge.rotation.copy(box.rotation);
 
-        // Moving lights
-        key.position.x = 4 + Math.sin(t * 0.3) * 1.5;
-        key.position.z = 5 + Math.cos(t * 0.4) * 1.5;
+        // Moving spotlight (stays on the right)
+        key.position.y = 1.5 + Math.sin(t * 0.4) * 0.8;
+        key.position.z = 0.5 + Math.cos(t * 0.5) * 0.6;
 
         R.render(S, C);
       };
